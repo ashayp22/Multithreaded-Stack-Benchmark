@@ -2,7 +2,7 @@
 
 I was curious what the performance difference was between using atomics and mutexes as a locking mechanism in C++, so that data reads/writes can occur in multithreaded situations without data races.
 
-I implemented two stacks, one with a mutex and one with atomics, and benchmarked with Google Benchmark to see how long it would take to add ints to the stack in different settings. So far, mutex locks perform better than atomics, and so as of 10/27/23 I am looking into why this is the case.
+I implemented three stacks, one with the std::mutex, one with atomics, and one with an atomic mutex, and benchmarked with Google Benchmark to see how long it would take to add ints to the stack in different settings. So far, mutex performs the best. My current theory is that there are some optimizations happening with std::mutex that delivers the lowest overhead with between context-switching and busy-waiting.
 
 ### 1 Thread, 10000 Objects Each
 
@@ -16,6 +16,9 @@ I implemented two stacks, one with a mutex and one with atomics, and benchmarked
 
 ![100 Threads, 1000 Objects Each](results/100Thread1000Obj.png)
 
+## With an increment counter test with 10 Threads, 1000 Objects Each
+
+![Including an increment test with 10 Threads, 1000 Objects](results/Increment.png)
 ## Installation
 
 1. Install [Google Benchmark](https://github.com/google/benchmark) to the root directory

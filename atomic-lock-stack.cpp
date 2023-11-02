@@ -1,19 +1,20 @@
-#include <atomic>
-#include <memory>
+#pragma once
+
 #include "node.cpp"
+#include "atomic-lock.cpp"
 
 template<typename T>
-class Stack
+class AtomicLockStack
 {
 private:
-    Node<T>* head;
-    std::mutex m;
+    AtomicNode<T>* head;
+    AtomicLock m;
     int counter = 0;
 public:
-    Stack() : head(nullptr) { } 
+    AtomicLockStack() : head(nullptr) { }
     void push(const T& data)
     {
-        Node<T>* new_node = new Node<T>(data);
+        AtomicNode<T>* new_node = new AtomicNode<T>(data);
 
         m.lock();
         new_node->next = head;
@@ -22,7 +23,7 @@ public:
     }
     int get_size() { 
         int size = 0;
-        Node<T>* curr = head;
+        AtomicNode<T>* curr = head;
 
         while (curr != nullptr) {
             size += 1;
@@ -30,8 +31,8 @@ public:
         }
 
         return size;
-     }
-     void increment() {
+    }
+    void increment() {
         m.lock();
         counter += 1;
         m.unlock();
